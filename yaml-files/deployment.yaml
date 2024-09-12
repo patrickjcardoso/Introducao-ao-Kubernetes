@@ -1,0 +1,57 @@
+# Este arquivo YAML define um Deployment no Kubernetes.
+# Um Deployment gerencia um conjunto de réplicas de Pods, garantindo que um número específico de Pods esteja sempre rodando.
+# Ele facilita a escalabilidade e a atualização contínua de aplicações sem downtime.
+
+apiVersion: apps/v1 # Define a versão da API usada para o Deployment.
+kind: Deployment # Tipo de objeto sendo criado: Deployment.
+metadata:
+  name: meu-deployment # Nome do Deployment, único no namespace.
+  labels:
+    app: meu-app # Labels para identificar e agrupar objetos relacionados.
+
+spec:
+  replicas: 3 # Número de réplicas (Pods) que este Deployment deve manter.
+  selector:
+    matchLabels:
+      app: meu-app # O selector garante que o Deployment gerencie apenas Pods com essas labels.
+  template: # Template descreve os Pods que serão criados pelo Deployment.
+    metadata:
+      labels:
+        app: meu-app # Labels aplicadas aos Pods criados.
+    spec:
+      containers:
+      - name: meu-container # Nome do contêiner dentro do Pod.
+        image: nginx:latest # Imagem do contêiner (aqui usamos a última versão do NGINX).
+        
+        # Define as portas expostas pelo contêiner.
+        ports:
+        - containerPort: 80 # O contêiner escutará na porta 80.
+
+        # Readiness Probe garante que o contêiner esteja pronto para receber tráfego.
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 5 # Aguarda 5 segundos antes da primeira verificação.
+          periodSeconds: 10 # Verifica a cada 10 segundos.
+
+        # Liveness Probe monitora se o contêiner está funcionando corretamente.
+        # Se esta verificação falhar, o contêiner será reiniciado.
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 10 # Aguarda 10 segundos antes da primeira verificação.
+          periodSeconds: 10 # Verifica a cada 10 segundos.
+
+        # Definição de limites e requisições de recursos (CPU e memória) para o contêiner.
+        resources:
+          requests:
+            memory: "64Mi" # Quantidade mínima de memória requisitada.
+            cpu: "250m" # Quantidade mínima de CPU requisitada.
+          limits:
+            memory: "128Mi" # Limite máximo de memória.
+            cpu: "500m" # Limite máximo de CPU.
+
+# Para aplicar este arquivo e criar o Deployment no Kubernetes, use o comando:
+# kubectl apply -f nome-do-arquivo.yaml

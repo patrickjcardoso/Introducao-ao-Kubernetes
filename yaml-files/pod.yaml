@@ -1,0 +1,49 @@
+# Este é um arquivo YAML que define um Pod no Kubernetes.
+# Um Pod é a menor unidade de computação que pode ser criada e gerenciada no Kubernetes.
+# Ele pode conter um ou mais contêineres que compartilham o mesmo armazenamento e rede.
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: meu-primeiro-pod # Nome do Pod, que deve ser único dentro do namespace.
+  labels:
+    app: meu-app # Labels são pares chave-valor que ajudam a identificar e selecionar este Pod.
+
+spec:
+  containers:
+  - name: meu-container # Nome do contêiner dentro do Pod.
+    image: nginx:latest # Imagem do contêiner a ser utilizada. Neste caso, estamos usando a imagem do NGINX.
+    
+    # Ports define as portas que o contêiner vai expor.
+    ports:
+    - containerPort: 80 # Porta que o NGINX vai escutar dentro do contêiner.
+
+    # Liveness Probe verifica se o contêiner está em execução.
+    # Se esta verificação falhar, o contêiner será reiniciado.
+    livenessProbe:
+      httpGet:
+        path: /
+        port: 80
+      initialDelaySeconds: 3 # Tempo de espera antes de iniciar a primeira verificação.
+      periodSeconds: 5 # Intervalo de tempo entre as verificações.
+
+    # Readiness Probe verifica se o contêiner está pronto para receber tráfego.
+    # Até que esta verificação passe, o Kubernetes não enviará tráfego ao contêiner.
+    readinessProbe:
+      httpGet:
+        path: /
+        port: 80
+      initialDelaySeconds: 3 # Tempo de espera antes de iniciar a primeira verificação.
+      periodSeconds: 5 # Intervalo de tempo entre as verificações.
+
+    # Resource Limits define os limites de recursos que o contêiner pode usar.
+    resources:
+      limits:
+        memory: "128Mi" # Limite máximo de memória que o contêiner pode usar.
+        cpu: "500m" # Limite máximo de CPU que o contêiner pode usar.
+      requests:
+        memory: "64Mi" # Quantidade mínima de memória necessária.
+        cpu: "250m" # Quantidade mínima de CPU necessária.
+
+# Para aplicar este arquivo e criar o Pod no Kubernetes, use o comando:
+# kubectl apply -f nome-do-arquivo.yaml
