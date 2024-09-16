@@ -1,0 +1,15 @@
+# LoadBalancer Service
+# Este tipo de Service expõe o serviço externamente através de um balanceador de carga.
+apiVersion: v1
+kind: Service
+metadata:
+  name: meu-servico-loadbalancer # Nome do Service.
+spec:
+  selector:
+    app: meu-app # Seleciona os Pods com essa label.
+  ports:
+    - protocol: TCP
+      port: 80 # Porta exposta externamente através do Load Balancer.
+      targetPort: 80 # Porta dentro dos Pods.
+  type: LoadBalancer # Tipo de Service que cria um balanceador de carga externo.
+  

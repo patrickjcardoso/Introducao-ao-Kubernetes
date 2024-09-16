@@ -1,0 +1,15 @@
+# NodePort Service
+# Este tipo de Service expõe o serviço externamente, mapeando uma porta em cada nó do cluster.
+apiVersion: v1
+kind: Service
+metadata:
+  name: meu-servico-nodeport # Nome do Service.
+spec:
+  selector:
+    app: meu-app # Seleciona os Pods com essa label.
+  ports:
+    - protocol: TCP
+      port: 80 # Porta que o Service expõe internamente no cluster.
+      targetPort: 80 # Porta dentro dos Pods.
+      nodePort: 30007 # Porta exposta externamente em cada nó (precisa estar no intervalo 30000-32767).
+  type: NodePort # Tipo de Service que expõe a porta externamente.

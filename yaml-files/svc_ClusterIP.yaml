@@ -1,0 +1,15 @@
+# ClusterIP Service
+# Este tipo de Service expõe o serviço apenas internamente ao cluster.
+# O tráfego externo não pode acessar diretamente o serviço.
+apiVersion: v1
+kind: Service
+metadata:
+  name: meu-servico-clusterip # Nome do Service.
+spec:
+  selector:
+    app: meu-app # Seleciona os Pods com essa label.
+  ports:
+    - protocol: TCP
+      port: 80 # Porta que será exposta no Service.
+      targetPort: 80 # Porta para a qual o tráfego será redirecionado nos Pods.
+  type: ClusterIP # Tipo de Service (padrão).
